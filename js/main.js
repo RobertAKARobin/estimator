@@ -1,50 +1,47 @@
 'use strict';
 
+var $d = {};
+
 var Project = (function(){
 
-	// Everything is private, unless attached to $Class or $Instance
-	var $Class = {};
-	var $Instance = {};
-	var $Instance_Constructor;
-	var $DOM_Constructor;
-
-	$Class.all = [];
-	// Class methods
-	$Class.new = function(){
-		var project = Object.create($Instance);
-		$Instance_Constructor.apply(project, arguments);
-		$DOM_Constructor.apply(project);
-		$Class.all.push(project);
-		return project;
-	}
-
-	$Instance_Constructor = function(title){
-		var project = this;
-		project.title = title;
-	}
-	// Instance methods
-	$Instance.mountTo = function(element){
-		var project = this;
-		return m.mount(element, project.DOM);
-	}
-
-	// Creates a unique Mithril component for each instance
-	$DOM_Constructor = function(){
-		var project = this;
-		project.DOM = {
-			view: function(){
+	return {
+		oninit: function(){
+			m.request({
+				url: './sample.json'
+			}).then(function(response){
+				$d = response;
+			})
+		},
+		view: function(){
+			if($d.sprints){
 				return [
-					m('h1', project.title)
+					m('h1', $d.title),
+					m('p', $d.description),
+					Object.keys($d.sprints).map(function(sprintId){
+						var sprint = $d.sprints[sprintId];
+						return [
+							m('h2', 'Sprint: ' + sprint.title),
+							m('ul', [
+								Object.keys($d.features).map(function(featureId){
+									var feature = $d.features[featureId];
+									if(feature.sprint == sprintId){
+										return m('li', feature.title);
+									}
+								})
+							])
+						]
+					})
+				]
+			}else{
+				return [
+					m('p', 'Loading...')
 				]
 			}
 		}
 	}
 
-	return $Class;
-
 })();
 
 document.addEventListener('DOMContentLoaded', function(){
-	var project = Project.new('My sweet project');
-	project.mountTo(document.getElementById('project'));
+	m.mount(document.getElementById('project'), Project);
 });
