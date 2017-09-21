@@ -6,41 +6,47 @@ var Feature = DataModel('feature');
 
 var Interface = (function(){
 
+	var project = undefined;
+
+	var views = {
+		sprint: function(sprint){
+			return [
+				m('h2', 'Sprint: ' + sprint.data.title),
+				m('ul', [
+					sprint.getChildren(Feature).map(views.feature)
+				])
+			]
+		},
+		feature: function(feature){
+			return [
+				m('li', feature.data.title)
+			]
+		}
+	}
+
 	return {
 		oninit: function(){
 			m.request({
 				url: './sample.json'
 			}).then(function(response){
 				Data = response;
+				project = Project.new(response);
 				Object.keys(Data.sprints).forEach(Sprint.newFromID);
 				Object.keys(Data.features).forEach(Feature.newFromID);
 			})
 		},
 		view: function(){
-			// if($sprints){
-			// 	return [
-			// 		m('h1', $title),
-			// 		m('p', $description),
-			// 		Object.keys($sprints).map(function(sprintId){
-			// 			var sprint = $sprints[sprintId];
-			// 			return [
-			// 				m('h2', 'Sprint: ' + sprint.title),
-			// 				m('ul', [
-			// 					Object.keys($features).map(function(featureId){
-			// 						var feature = $features[featureId];
-			// 						if(feature.sprint == sprintId){
-			// 							return m('li', feature.title);
-			// 						}
-			// 					})
-			// 				])
-			// 			]
-			// 		})
-			// 	]
-			// }else{
-			// 	return [
-			// 		m('p', 'Loading...')
-			// 	]
-			// }
+			if(project){
+				return [
+					m('h1', project.data.title),
+					m('p', project.data.description),
+					Sprint.all.map(views.sprint)
+				]
+			}else{
+				return [
+					m('p', 'Loading...')
+				]
+			}
 		}
 	}
 
