@@ -30,3 +30,11 @@ Array.prototype.flatten = function(){
 		}
 	}
 }
+m.wrap = function(wrapperNode, wrapperAttributes, list){
+	var output = [];
+	wrapperAttributes = (wrapperAttributes || {});
+	for(var i = 0, l = list.length; i < l; i++){
+		output.push(m(wrapperNode, wrapperAttributes, list[i]));
+	}
+	return output;
+}

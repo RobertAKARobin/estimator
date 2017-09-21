@@ -13,13 +13,13 @@ var Interface = (function(){
 			return [
 				m('h2', 'Sprint: ' + sprint.data.title),
 				m('ul', [
-					sprint.getChildren(Feature).map(views.feature)
+					m.wrap('li', {}, sprint.getChildren(Feature).map(views.feature))
 				])
 			]
 		},
 		feature: function(feature){
 			return [
-				m('li', feature.data.title)
+				feature.data.title
 			]
 		}
 	}
@@ -31,8 +31,8 @@ var Interface = (function(){
 			}).then(function(response){
 				Data = response;
 				project = Project.new(response);
-				Object.keys(Data.sprints).forEach(Sprint.newFromID);
-				Object.keys(Data.features).forEach(Feature.newFromID);
+				Object.keys(Data.sprints).forEach(Sprint.findByID);
+				Object.keys(Data.features).forEach(Feature.findByID);
 			})
 		},
 		view: function(){

@@ -36,7 +36,7 @@ function DataModel(className){
 		Class.all.push(instance);
 		return instance;
 	}
-	Class.newFromID = function(id){
+	Class.findByID = function(id){
 		var data = Data[Class.namePlural][id];
 		var instance = Class.new(data);
 		instance.id = id;
