@@ -24,10 +24,10 @@ function DataModel(className){
 	}
 	Instance.createChild = function(childClass, data){
 		var instance = this;
-		var id = randomID();
+		var id = randomId();
 		data[instance.class.name + 'Id'] = instance.id;
 		Data[childClass.namePlural][id] = data;
-		return childClass.findByID(id);
+		return childClass.findById(id);
 	}
 
 	var Class = {
@@ -43,18 +43,27 @@ function DataModel(className){
 		Class.all.push(instance);
 		return instance;
 	}
-	Class.findByID = function(id){
+	Class.findById = function(id){
 		var data = Data[Class.namePlural][id];
 		var instance = Class.new(data);
 		instance.id = id;
 		Class.allById[instance.id] = instance;
 		return instance;
 	}
+	Class.deleteById = function(id){
+		for(var index = 0, l = Class.all.length; index < l; index++){
+			if(Class.all[index].id == id){
+				delete Class.allById[id];
+				Class.all.splice(index, 1);
+				return true;
+			}
+		}
+	}
 
 	Instance.class = Class;
 	return Class;
 
-	function randomID(){
+	function randomId(){
 		return Math.floor(Math.random() * (Math.pow(10, 8)));
 	}
 }

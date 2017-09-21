@@ -16,6 +16,10 @@ var Interface = (function(){
 			}else{
 				event.redraw = false;
 			}
+		},
+		removeFeature: function(event){
+			var feature = this;
+			event.redraw = !!(Feature.deleteById(feature.id));
 		}
 	}
 
@@ -40,6 +44,9 @@ var Interface = (function(){
 		},
 		feature: function(feature){
 			return [
+				m('button', {
+					onclick: events.removeFeature.bind(feature)
+				}, 'x'),
 				feature.data.title
 			]
 		}
@@ -52,8 +59,8 @@ var Interface = (function(){
 			}).then(function(response){
 				Data = response;
 				project = Project.new(response);
-				Object.keys(Data.sprints).forEach(Sprint.findByID);
-				Object.keys(Data.features).forEach(Feature.findByID);
+				Object.keys(Data.sprints).forEach(Sprint.findById);
+				Object.keys(Data.features).forEach(Feature.findById);
 			})
 		},
 		view: function(){
