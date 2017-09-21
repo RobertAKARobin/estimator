@@ -14,17 +14,17 @@
 	"features": {
 		"0": {
 			"title": "Sign up",
-			"sprint": "0",
+			"sprintId": "0",
 			"order": "0"
 		},
 		"1": {
 			"title": "Sign in",
-			"sprint": "0",
+			"sprintId": "0",
 			"order": "1"
 		},
 		"2": {
 			"title": "API integration",
-			"sprint": "1",
+			"sprintId": "1",
 			"order": "2"
 		}
 	}
