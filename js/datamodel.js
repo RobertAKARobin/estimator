@@ -22,6 +22,13 @@ function DataModel(className){
 		}
 		return output;
 	}
+	Instance.createChild = function(childClass, data){
+		var instance = this;
+		var id = randomID();
+		data[instance.class.name + 'Id'] = instance.id;
+		Data[childClass.namePlural][id] = data;
+		return childClass.findByID(id);
+	}
 
 	var Class = {
 		all: [],
@@ -46,4 +53,8 @@ function DataModel(className){
 
 	Instance.class = Class;
 	return Class;
+
+	function randomID(){
+		return Math.floor(Math.random() * (Math.pow(10, 8)));
+	}
 }

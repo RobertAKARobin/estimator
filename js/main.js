@@ -8,12 +8,33 @@ var Interface = (function(){
 
 	var project = undefined;
 
+	var events = {
+		addFeatureToSprint: function(event){
+			var newFeature = this;
+			if(event.keyCode == 13){
+				newFeature.sprint.createChild(Feature, newFeature.data);
+			}else{
+				event.redraw = false;
+			}
+		}
+	}
+
 	var views = {
 		sprint: function(sprint){
+			var newFeature = {
+				sprint: sprint,
+				data: {}
+			};
 			return [
 				m('h2', 'Sprint: ' + sprint.data.title),
 				m('ul', [
-					m.wrap('li', {}, sprint.getChildren(Feature).map(views.feature))
+					m.wrap('li', {}, sprint.getChildren(Feature).map(views.feature)),
+					m('li', [
+						m.input(newFeature.data, 'title', {
+							placeholder: 'Feature name',
+							onkeyup: events.addFeatureToSprint.bind(newFeature)
+						})
+					])
 				])
 			]
 		},

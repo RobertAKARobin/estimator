@@ -38,3 +38,12 @@ m.wrap = function(wrapperNode, wrapperAttributes, list){
 	}
 	return output;
 }
+m.input = function(object, property, attributes){
+	var attributes = (attributes || {});
+	attributes.value = (object[property] || '');
+	attributes.oninput = function(event){
+		event.redraw = false;
+		object[property] = event.target.value;
+	}
+	return m('input', attributes);
+}
