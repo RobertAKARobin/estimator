@@ -10,24 +10,27 @@ function DataModel(className){
 		var instance = this;
 		instance.data = data;
 		return instance;
-	},
+	}
 	Instance.getChildren = function(childClass){
 		var instance = this;
 		var output = [];
 		for(var i = 0, l = childClass.all.length; i < l; i++){
 			var child = childClass.all[i];
-			if(child.data[Class.name + 'Id'] == instance.id){
+			if(child.data[instance.class.name + 'Id'] == instance.id){
 				output.push(child);
 			}
 		}
 		return output;
 	}
-	Instance.createChild = function(childClass, data){
+	Instance.delete = function(){
 		var instance = this;
-		var id = randomId();
-		data[instance.class.name + 'Id'] = instance.id;
-		Data[childClass.namePlural][id] = data;
-		return childClass.findById(id);
+		return !!(instance.class.delete(instance));
+	}
+	Instance.putNewChild = function(childClass, data){
+		var instance = this;
+		var child = childClass.putNew(data);
+		child.data[instance.class.name + 'Id'] = instance.id;
+		return child;
 	}
 
 	var Class = {
@@ -37,26 +40,50 @@ function DataModel(className){
 		name: className,
 		namePlural: className + 's'
 	};
-	Class.new = function(){
+	Class.getNew = function(){
 		var instance = Object.create(Instance);
 		Instance.constructor.apply(instance, arguments);
-		Class.all.push(instance);
 		return instance;
 	}
-	Class.findById = function(id){
+	Class.putNew = function(){
+		var instance = Class.getNew.apply(null, arguments);
+		Class.putInAll(instance);
+		return instance;
+	}
+	Class.putInAll = function(instance){
+		instance.id = (instance.id || randomId());
+		if(Class.getIndex(instance.id) > -1){
+			return false;
+		}else{
+			Class.all.push(instance);
+			Class.allById[instance.id] = instance;
+		}
+		return instance;
+	}
+	Class.loadById = function(id){
 		var data = Data[Class.namePlural][id];
-		var instance = Class.new(data);
+		var instance = Class.getNew(data);
 		instance.id = id;
-		Class.allById[instance.id] = instance;
+		Class.putInAll(instance);
 		return instance;
 	}
-	Class.deleteById = function(id){
-		for(var index = 0, l = Class.all.length; index < l; index++){
-			if(Class.all[index].id == id){
-				delete Class.allById[id];
-				Class.all.splice(index, 1);
-				return true;
+	Class.getIndex = function(instance){
+		var index = 0;
+		for(var l = Class.all.length; index < l; index++){
+			if(Class.all[index].id == instance.id){
+				return index;
 			}
+		}
+		return -1;
+	}
+	Class.delete = function(instance){
+		var index = Class.getIndex(instance);
+		if(index < 0){
+			return false;
+		}else{
+			delete Class.allById[instance.id];
+			Class.all.splice(index, 1);
+			return true;
 		}
 	}
 

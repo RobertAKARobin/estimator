@@ -12,43 +12,68 @@ var Interface = (function(){
 		addFeatureToSprint: function(event){
 			var newFeature = this;
 			if(event.keyCode == 13){
-				newFeature.sprint.createChild(Feature, newFeature.data);
+				newFeature.sprint.putNewChild(Feature, newFeature.data);
+			}else{
+				event.redraw = false;
+			}
+		},
+		addSprint: function(event){
+			var newSprint = this;
+			if(event.keyCode == 13){
+				Sprint.putNew(newSprint.data);
 			}else{
 				event.redraw = false;
 			}
 		},
 		removeFeature: function(event){
 			var feature = this;
-			event.redraw = !!(Feature.deleteById(feature.id));
+			feature.delete();
 		}
 	}
 
 	var views = {
-		sprint: function(sprint){
-			var newFeature = {
-				sprint: sprint,
-				data: {}
-			};
-			return [
-				m('h2', 'Sprint: ' + sprint.data.title),
-				m('ul', [
-					m.wrap('li', {}, sprint.getChildren(Feature).map(views.feature)),
-					m('li', [
-						m.input(newFeature.data, 'title', {
-							placeholder: 'Feature name',
-							onkeyup: events.addFeatureToSprint.bind(newFeature)
+		sprint: {
+			show: function(sprint){
+				var newFeature = {
+					sprint: sprint,
+					data: {}
+				};
+				return [
+					m('h2', 'Sprint: ' + sprint.data.title),
+					m('ul', [
+						m.wrap('li', {}, sprint.getChildren(Feature).map(views.feature.show)),
+						m('li', [
+							m.input(newFeature.data, 'title', {
+								placeholder: 'Feature name',
+								onkeyup: events.addFeatureToSprint.bind(newFeature)
+							})
+						])
+					])
+				]
+			},
+			new: function(){
+				var newSprint = {
+					data: {}
+				};
+				return [
+					m('h2', [
+						m.input(newSprint.data, 'title', {
+							placeholder: 'Sprint name',
+							onkeyup: events.addSprint.bind(newSprint)
 						})
 					])
-				])
-			]
+				]
+			}
 		},
-		feature: function(feature){
-			return [
-				m('button', {
-					onclick: events.removeFeature.bind(feature)
-				}, 'x'),
-				feature.data.title
-			]
+		feature: {
+			show: function(feature){
+				return [
+					m('button', {
+						onclick: events.removeFeature.bind(feature)
+					}, 'x'),
+					feature.data.title
+				]
+			}
 		}
 	}
 
@@ -58,9 +83,9 @@ var Interface = (function(){
 				url: './sample.json'
 			}).then(function(response){
 				Data = response;
-				project = Project.new(response);
-				Object.keys(Data.sprints).forEach(Sprint.findById);
-				Object.keys(Data.features).forEach(Feature.findById);
+				project = Project.getNew(response);
+				Object.keys(Data.sprints).forEach(Sprint.loadById);
+				Object.keys(Data.features).forEach(Feature.loadById);
 			})
 		},
 		view: function(){
@@ -68,7 +93,8 @@ var Interface = (function(){
 				return [
 					m('h1', project.data.title),
 					m('p', project.data.description),
-					Sprint.all.map(views.sprint)
+					Sprint.all.map(views.sprint.show),
+					views.sprint.new()
 				]
 			}else{
 				return [
