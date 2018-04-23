@@ -1,15 +1,13 @@
-'use strict';
-
-var Table = (function(){
+const Table = ( ()=>{
 
 	return {
-		view: function(){
+		view: ()=>{
 			return 'Component'
 		}
 	}
 
-})();
+} )()
 
-document.addEventListener('DOMContentLoaded', function(){
-	m.mount(document.getElementById('project'), Table);
-});
+document.addEventListener('DOMContentLoaded', ()=>{
+	m.mount(document.getElementById('project'), Table)
+})
