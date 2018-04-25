@@ -10,11 +10,27 @@ class LineItemList {
 		lineItemList.list.push(lineItem)
 	}
 
+	remove(lineItem){
+		const lineItemList = this
+		lineItemList.list = lineItemList.list.filter((item)=>{
+			return item !== lineItem
+		})
+	}
+
 	view(){
 		const lineItemList = this
 		const newLineItem = new LineItem()
 		return [
-			lineItemList.list.map(lineItem => lineItem._listItem()),
+			lineItemList.list.map((lineItem) => {
+				return m('p', [
+					m('button', {
+						onclick: (event)=>{
+							lineItemList.remove(lineItem)
+						}
+					}, 'x'),
+					lineItem._listItem()
+				])
+			}),
 			newLineItem._form(),
 			m('button', {
 				onclick: (event)=>{
@@ -44,7 +60,7 @@ class LineItem {
 
 	_listItem(){
 		const lineItem = this
-		return m('p', `${lineItem.title}: ${lineItem.description}`)
+		return `${lineItem.title}: ${lineItem.description}`
 	}
 
 	_form(){
