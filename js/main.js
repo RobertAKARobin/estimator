@@ -28,10 +28,10 @@ class LineItemList {
 							lineItemList.remove(lineItem)
 						}
 					}, 'x'),
-					lineItem._listItem()
+					lineItem.view_listItem()
 				])
 			}),
-			newLineItem._form(),
+			newLineItem.view_form(),
 			m('button', {
 				onclick: (event)=>{
 					lineItemList.add(newLineItem)
@@ -58,12 +58,12 @@ class LineItem {
 		}
 	}
 
-	_listItem(){
+	view_listItem(){
 		const lineItem = this
 		return `${lineItem.title}: ${lineItem.description}`
 	}
 
-	_form(){
+	view_form(){
 		const lineItem = this
 		return Object.entries(lineItem).map(([fieldName, value])=>{
 			return [
